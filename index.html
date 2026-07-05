@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Paw Stamps">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<title>Paw Stamps 🐾</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFF6E0;
+  --paper2:#FFEEC2;
+  --ink:#2B2117;
+  --red:#E8503A;
+  --red-dk:#C03826;
+  --yellow:#FFC531;
+  --yellow-dk:#E8A80C;
+  --blue:#5AB1E8;
+  --pink:#FF8FA3;
+  --green:#7BC96F;
+  --white:#FFFFFF;
+  --font:'Baloo 2','Arial Rounded MT Bold','Chalkboard SE',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{
+  font-family:var(--font);
+  color:var(--ink);
+  background:var(--paper);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='%232B2117' fill-opacity='0.045'%3E%3Cg transform='translate(28 30) rotate(-18)'%3E%3Cellipse cx='0' cy='6' rx='9' ry='7'/%3E%3Ccircle cx='-8' cy='-5' r='3.4'/%3E%3Ccircle cx='-2.5' cy='-8.5' r='3.4'/%3E%3Ccircle cx='3.5' cy='-8' r='3.4'/%3E%3Ccircle cx='9' cy='-4' r='3.4'/%3E%3C/g%3E%3Cg transform='translate(112 108) rotate(22)'%3E%3Cellipse cx='0' cy='6' rx='9' ry='7'/%3E%3Ccircle cx='-8' cy='-5' r='3.4'/%3E%3Ccircle cx='-2.5' cy='-8.5' r='3.4'/%3E%3Ccircle cx='3.5' cy='-8' r='3.4'/%3E%3Ccircle cx='9' cy='-4' r='3.4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  position:fixed;inset:0;
+  user-select:none;-webkit-user-select:none;
+  touch-action:manipulation;
+}
+#app{height:100%;display:flex;flex-direction:column;}
+
+/* ============ HEADER ============ */
+header{
+  padding:calc(10px + env(safe-area-inset-top)) 18px 8px;
+  display:flex;align-items:center;gap:14px;
+  flex-shrink:0;
+}
+.mascot{width:86px;height:78px;flex-shrink:0;}
+.mascot svg{width:100%;height:100%;overflow:visible;}
+.mascot .cat-bod{animation:idlebounce 2.4s ease-in-out infinite;transform-origin:50% 100%;}
+.mascot .tail{animation:tailwag 2.4s ease-in-out infinite;transform-origin:8% 90%;}
+@keyframes idlebounce{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.94) scaleX(1.03)}}
+@keyframes tailwag{0%,100%{transform:rotate(0deg)}50%{transform:rotate(14deg)}}
+.hgroup{flex:1;min-width:0;}
+.hgroup h1{font-size:24px;font-weight:800;line-height:1.05;letter-spacing:.3px;}
+.hgroup .sub{font-size:14px;font-weight:700;color:#8a7a5e;}
+.balance{
+  background:var(--white);
+  border:3.5px solid var(--ink);
+  border-radius:22px;
+  box-shadow:0 5px 0 var(--ink);
+  padding:6px 18px 8px;
+  display:flex;align-items:center;gap:8px;
+  transform:rotate(2deg);
+}
+.balance .paw-ico{width:30px;height:30px;}
+.balance b{font-size:30px;font-weight:800;color:var(--red);line-height:1;}
+.balance .lbl{font-size:11px;font-weight:700;color:#8a7a5e;line-height:1;}
+.gear{
+  width:44px;height:44px;border:none;background:none;font-size:26px;
+  opacity:.45;flex-shrink:0;
+}
+
+/* ============ MAIN SCROLL AREA ============ */
+main{
+  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:6px 18px 110px;
+}
+.tabpage{display:none;}
+.tabpage.on{display:block;animation:pagein .28s ease;}
+@keyframes pagein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ============ STAMP CARD ============ */
+.section-title{
+  font-size:17px;font-weight:800;margin:14px 2px 10px;
+  display:flex;align-items:center;gap:8px;color:#6e5f45;
+}
+.fullcards{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px;}
+.minicard{
+  background:var(--yellow);
+  border:3px solid var(--ink);border-radius:12px;
+  box-shadow:0 3px 0 var(--ink);
+  padding:5px 12px;font-weight:800;font-size:15px;
+  display:flex;align-items:center;gap:6px;
+  transform:rotate(-2deg);
+}
+.minicard:nth-child(even){transform:rotate(2deg);background:var(--pink);}
+.stampcard{
+  background:var(--white);
+  border:4px solid var(--ink);
+  border-radius:26px;
+  box-shadow:0 7px 0 var(--ink);
+  padding:20px 16px 16px;
+  position:relative;
+  margin-top:8px;
+}
+.stampcard .ribbon{
+  position:absolute;top:-14px;left:22px;
+  background:var(--red);color:#fff;
+  border:3px solid var(--ink);border-radius:12px;
+  padding:2px 14px 3px;font-weight:800;font-size:14px;
+  box-shadow:0 3px 0 var(--ink);
+  transform:rotate(-3deg);
+}
+.slots{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  gap:12px;justify-items:center;
+}
+.slot{
+  width:100%;max-width:76px;
+  position:relative;
+}
+.slot::before{content:"";display:block;padding-top:100%;}
+.slot .ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:3px dashed #d9c9a6;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;color:#d9c9a6;
+}
+.slot .stampink{
+  position:absolute;inset:-6%;
+}
+.slot .stampink svg{width:100%;height:100%;overflow:visible;}
+.slot.fresh .stampink{animation:slam .45s cubic-bezier(.2,2.2,.4,1) both;}
+@keyframes slam{
+  0%{transform:scale(3) rotate(-30deg);opacity:0;}
+  60%{transform:scale(.92);opacity:1;}
+  100%{transform:scale(1);}
+}
+.card-progress{
+  text-align:center;margin-top:14px;font-weight:800;font-size:15px;color:#8a7a5e;
+}
+
+/* ============ REWARDS ============ */
+.reward{
+  background:var(--white);
+  border:4px solid var(--ink);border-radius:22px;
+  box-shadow:0 6px 0 var(--ink);
+  padding:14px 16px;margin-bottom:16px;
+  display:flex;align-items:center;gap:14px;
+}
+.reward .r-ico{
+  font-size:40px;width:64px;height:64px;flex-shrink:0;
+  background:var(--paper2);border:3px solid var(--ink);border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+}
+.reward.ok .r-ico{background:var(--yellow);animation:wob 1.2s ease-in-out infinite;}
+@keyframes wob{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+.reward .r-mid{flex:1;min-width:0;}
+.reward .r-name{font-size:18px;font-weight:800;line-height:1.15;}
+.reward .r-cost{font-size:13px;font-weight:700;color:#8a7a5e;margin-bottom:6px;}
+.pbar{
+  height:16px;background:var(--paper2);
+  border:2.5px solid var(--ink);border-radius:10px;overflow:hidden;
+}
+.pbar i{
+  display:block;height:100%;background:var(--green);
+  border-radius:6px 0 0 6px;
+  transition:width .5s cubic-bezier(.3,1.4,.5,1);
+}
+.reward.ok .pbar i{background:var(--yellow);}
+.btn-redeem{
+  font-family:var(--font);font-weight:800;font-size:15px;
+  border:3px solid var(--ink);border-radius:16px;
+  padding:10px 14px;flex-shrink:0;
+  background:#e9e2d2;color:#a99;color:#9b8f78;
+  box-shadow:0 4px 0 var(--ink);
+}
+.reward.ok .btn-redeem{background:var(--red);color:#fff;}
+.btn-redeem:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink);}
+
+/* ============ HISTORY ============ */
+.day-h{font-size:13px;font-weight:800;color:#8a7a5e;margin:16px 4px 6px;}
+.hitem{
+  background:var(--white);border:3px solid var(--ink);border-radius:16px;
+  box-shadow:0 4px 0 var(--ink);
+  padding:10px 14px;margin-bottom:10px;
+  display:flex;align-items:center;gap:12px;font-weight:700;
+}
+.hitem .h-amt{
+  font-weight:800;font-size:18px;flex-shrink:0;width:56px;text-align:center;
+  border-radius:12px;border:2.5px solid var(--ink);padding:3px 0;
+}
+.hitem.plus .h-amt{background:var(--green);color:#fff;}
+.hitem.minus .h-amt{background:var(--red);color:#fff;}
+.hitem .h-note{flex:1;font-size:15px;}
+.hitem .h-time{font-size:12px;color:#8a7a5e;flex-shrink:0;}
+.lifetime{
+  text-align:center;font-weight:800;color:#6e5f45;font-size:15px;
+  margin:6px 0 2px;
+}
+.empty{
+  text-align:center;color:#b3a488;font-weight:700;padding:40px 20px;font-size:16px;
+}
+
+/* ============ TAB BAR + FAB ============ */
+nav{
+  position:absolute;left:0;right:0;bottom:0;
+  padding:8px 14px calc(10px + env(safe-area-inset-bottom));
+  display:flex;gap:10px;
+  background:var(--paper);
+  border-top:3.5px solid var(--ink);
+}
+nav button{
+  flex:1;font-family:var(--font);font-weight:800;font-size:14px;
+  padding:8px 4px 9px;border:3px solid var(--ink);border-radius:16px;
+  background:var(--white);box-shadow:0 4px 0 var(--ink);color:var(--ink);
+}
+nav button.on{background:var(--yellow);}
+nav button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink);}
+nav button .t-ico{display:block;font-size:22px;line-height:1.1;}
+.fab{
+  position:absolute;right:16px;bottom:calc(86px + env(safe-area-inset-bottom));
+  width:84px;height:84px;border-radius:50%;
+  background:var(--red);border:4px solid var(--ink);
+  box-shadow:0 6px 0 var(--ink);
+  color:#fff;font-family:var(--font);font-weight:800;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:12px;line-height:1;
+  animation:fabpulse 2s ease-in-out infinite;
+  z-index:5;
+}
+.fab .plus{font-size:30px;line-height:1;margin-bottom:1px;}
+@keyframes fabpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.fab:active{transform:translateY(4px) !important;box-shadow:0 2px 0 var(--ink);animation:none;}
+
+/* ============ OVERLAYS ============ */
+.overlay{
+  position:absolute;inset:0;z-index:20;
+  background:rgba(43,33,23,.55);
+  display:none;align-items:center;justify-content:center;
+  padding:24px;
+}
+.overlay.on{display:flex;animation:fadein .2s ease;}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.modal{
+  background:var(--paper);
+  border:4px solid var(--ink);border-radius:28px;
+  box-shadow:0 8px 0 var(--ink);
+  width:100%;max-width:430px;max-height:86%;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:22px 22px 24px;
+  animation:popin .3s cubic-bezier(.2,1.6,.4,1);
+  position:relative;
+}
+@keyframes popin{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.modal h2{font-size:22px;font-weight:800;text-align:center;margin-bottom:4px;}
+.modal .m-sub{text-align:center;font-size:14px;font-weight:700;color:#8a7a5e;margin-bottom:14px;}
+.m-close{
+  position:absolute;top:10px;right:12px;width:38px;height:38px;
+  border:3px solid var(--ink);border-radius:50%;background:var(--white);
+  font-size:17px;font-weight:800;color:var(--ink);box-shadow:0 3px 0 var(--ink);
+  font-family:var(--font);
+}
+
+/* PIN pad */
+.pin-dots{display:flex;justify-content:center;gap:14px;margin:10px 0 18px;}
+.pin-dots i{
+  width:18px;height:18px;border-radius:50%;
+  border:3px solid var(--ink);background:var(--white);
+}
+.pin-dots i.f{background:var(--red);}
+.pin-dots.shake{animation:shake .4s ease;}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+.pinpad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:280px;margin:0 auto;}
+.pinpad button{
+  font-family:var(--font);font-size:24px;font-weight:800;
+  padding:12px 0;border:3px solid var(--ink);border-radius:18px;
+  background:var(--white);box-shadow:0 4px 0 var(--ink);color:var(--ink);
+}
+.pinpad button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink);}
+.pin-hint{text-align:center;font-size:12.5px;font-weight:700;color:#b3a488;margin-top:14px;}
+
+/* chips + big buttons */
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:6px;}
+.chip{
+  font-family:var(--font);font-weight:800;font-size:15px;
+  padding:9px 15px;border:3px solid var(--ink);border-radius:30px;
+  background:var(--white);box-shadow:0 3px 0 var(--ink);color:var(--ink);
+}
+.chip.on{background:var(--blue);color:#fff;}
+.chip:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink);}
+.countrow{display:flex;gap:12px;justify-content:center;margin:14px 0 4px;}
+.cnt{
+  width:58px;height:58px;border-radius:50%;
+  border:3px solid var(--ink);background:var(--white);
+  font-family:var(--font);font-size:21px;font-weight:800;
+  box-shadow:0 4px 0 var(--ink);color:var(--ink);
+}
+.cnt.on{background:var(--yellow);}
+.bigbtn{
+  display:block;width:100%;margin-top:18px;
+  font-family:var(--font);font-size:20px;font-weight:800;
+  padding:15px 0;border:4px solid var(--ink);border-radius:22px;
+  background:var(--red);color:#fff;box-shadow:0 6px 0 var(--ink);
+}
+.bigbtn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--ink);}
+.bigbtn.alt{background:var(--green);}
+.bigbtn.gray{background:#d8ceb8;color:#6e5f45;}
+.bigbtn:disabled{background:#d8ceb8;color:#a99b80;}
+input[type=text],input[type=number]{
+  font-family:var(--font);font-size:17px;font-weight:700;
+  width:100%;padding:11px 14px;color:var(--ink);
+  border:3px solid var(--ink);border-radius:16px;background:var(--white);
+  margin:4px 0 12px;
+}
+label{font-weight:800;font-size:14px;color:#6e5f45;display:block;margin-top:6px;}
+
+/* stamp slam overlay */
+#slamlay{
+  position:absolute;inset:0;z-index:40;display:none;
+  align-items:center;justify-content:center;pointer-events:none;
+}
+#slamlay.on{display:flex;}
+#slamlay .bigstamp{
+  width:46vmin;height:46vmin;max-width:340px;max-height:340px;
+  animation:bigslam .55s cubic-bezier(.25,1.9,.4,1) both;
+}
+@keyframes bigslam{
+  0%{transform:scale(4) rotate(-40deg);opacity:0;}
+  55%{transform:scale(.9) rotate(-8deg);opacity:1;}
+  75%{transform:scale(1.05) rotate(-8deg);}
+  100%{transform:scale(1) rotate(-8deg);}
+}
+.shakeit{animation:screenshake .4s ease .3s;}
+@keyframes screenshake{0%,100%{transform:none}25%{transform:translate(4px,-4px)}50%{transform:translate(-4px,3px)}75%{transform:translate(3px,2px)}}
+
+/* celebration */
+#celebrate .modal{text-align:center;}
+#celebrate .c-emoji{font-size:74px;margin:6px 0 4px;animation:wob 1s ease-in-out infinite;}
+#celebrate .c-line{font-size:26px;font-weight:800;color:var(--red);}
+#celebrate .c-line2{font-size:16px;font-weight:700;color:#6e5f45;margin-top:4px;}
+
+/* confetti */
+.cf{
+  position:absolute;width:12px;height:12px;z-index:50;pointer-events:none;
+  animation:cfall 1.5s ease-in forwards;
+}
+@keyframes cfall{
+  0%{opacity:1;}
+  100%{transform:translateY(105vh) rotate(720deg);opacity:.7;}
+}
+
+/* settings rows */
+.setrow{
+  background:var(--white);border:3px solid var(--ink);border-radius:16px;
+  box-shadow:0 4px 0 var(--ink);
+  padding:12px 14px;margin-bottom:12px;
+  display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px;
+}
+.setrow .grow{flex:1;}
+.smallbtn{
+  font-family:var(--font);font-weight:800;font-size:13px;
+  border:2.5px solid var(--ink);border-radius:12px;padding:7px 12px;
+  background:var(--yellow);box-shadow:0 3px 0 var(--ink);color:var(--ink);
+}
+.smallbtn.red{background:var(--red);color:#fff;}
+.smallbtn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink);}
+.r-editrow{
+  display:flex;gap:8px;align-items:center;margin-bottom:10px;
+}
+.r-editrow input.ico{width:64px;flex-shrink:0;text-align:center;margin:0;}
+.r-editrow input.nm{flex:1;margin:0;}
+.r-editrow input.ct{width:74px;flex-shrink:0;text-align:center;margin:0;}
+.r-editrow .del{
+  width:40px;height:40px;flex-shrink:0;border:2.5px solid var(--ink);
+  border-radius:12px;background:var(--white);font-size:16px;
+  box-shadow:0 3px 0 var(--ink);
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <div class="mascot" id="mascot"></div>
+    <div class="hgroup">
+      <h1 id="greet">Paw Stamps</h1>
+      <div class="sub" id="greetsub">Collect stamps, get treats!</div>
+    </div>
+    <div class="balance">
+      <svg class="paw-ico" viewBox="0 0 40 40"><g fill="#E8503A"><ellipse cx="20" cy="26" rx="10" ry="8"/><circle cx="9" cy="15" r="4"/><circle cx="16" cy="10.5" r="4"/><circle cx="24" cy="10.5" r="4"/><circle cx="31" cy="15" r="4"/></g></svg>
+      <div><b id="bal">0</b><div class="lbl">STAMPS</div></div>
+    </div>
+    <button class="gear" id="gearbtn">⚙️</button>
+  </header>
+
+  <main id="main">
+    <div class="tabpage on" id="page-wallet"></div>
+    <div class="tabpage" id="page-rewards"></div>
+    <div class="tabpage" id="page-book"></div>
+  </main>
+
+  <button class="fab" id="fabbtn"><span class="plus">🐾</span>GIVE<br>STAMP</button>
+
+  <nav>
+    <button data-tab="wallet" class="on"><span class="t-ico">🐾</span>Stamps</button>
+    <button data-tab="rewards"><span class="t-ico">🎁</span>Rewards</button>
+    <button data-tab="book"><span class="t-ico">📖</span>Book</button>
+  </nav>
+
+  <!-- PIN gate -->
+  <div class="overlay" id="gate">
+    <div class="modal" style="max-width:360px">
+      <button class="m-close" data-close="gate">✕</button>
+      <h2>Parents Only! 🙀</h2>
+      <div class="m-sub">Enter the secret code</div>
+      <div class="pin-dots" id="pindots"><i></i><i></i><i></i><i></i></div>
+      <div class="pinpad" id="pinpad"></div>
+      <div class="pin-hint" id="pinhint"></div>
+    </div>
+  </div>
+
+  <!-- Give stamp -->
+  <div class="overlay" id="give">
+    <div class="modal">
+      <button class="m-close" data-close="give">✕</button>
+      <h2>Give a Stamp! 🎉</h2>
+      <div class="m-sub">What good thing happened?</div>
+      <div class="chips" id="reasonchips"></div>
+      <input type="text" id="customreason" placeholder="Or type your own…" style="display:none">
+      <div class="m-sub" style="margin:10px 0 0">How many stamps?</div>
+      <div class="countrow" id="countrow">
+        <button class="cnt on" data-n="1">1</button>
+        <button class="cnt" data-n="2">2</button>
+        <button class="cnt" data-n="3">3</button>
+        <button class="cnt" data-n="5">5</button>
+        <button class="cnt" data-n="10">10</button>
+      </div>
+      <button class="bigbtn" id="stampit">STAMP IT! 🐾</button>
+    </div>
+  </div>
+
+  <!-- Redeem confirm -->
+  <div class="overlay" id="redeem">
+    <div class="modal" style="max-width:380px;text-align:center">
+      <button class="m-close" data-close="redeem">✕</button>
+      <h2 id="rd-title">Redeem?</h2>
+      <div style="font-size:64px;margin:8px 0" id="rd-ico">🎁</div>
+      <div class="m-sub" id="rd-sub"></div>
+      <button class="bigbtn alt" id="rd-yes">YES! Trade stamps 🎉</button>
+    </div>
+  </div>
+
+  <!-- Celebration -->
+  <div class="overlay" id="celebrate">
+    <div class="modal" style="max-width:380px">
+      <div class="c-emoji" id="c-emoji">🎉</div>
+      <div class="c-line" id="c-line">HOORAY!</div>
+      <div class="c-line2" id="c-line2"></div>
+      <button class="bigbtn" id="c-ok">YAY! 🐱</button>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div class="overlay" id="settings">
+    <div class="modal">
+      <button class="m-close" data-close="settings">✕</button>
+      <h2>Settings ⚙️</h2>
+      <div class="m-sub">Parents' corner</div>
+      <label>Kid's name</label>
+      <input type="text" id="set-name" maxlength="20">
+      <div class="setrow">
+        <span class="grow">Sound effects</span>
+        <button class="smallbtn" id="set-sound">On</button>
+      </div>
+      <div class="setrow">
+        <span class="grow">Secret code (PIN)</span>
+        <button class="smallbtn" id="set-pin">Change</button>
+      </div>
+      <label style="margin-top:14px">Rewards (emoji · name · stamps needed)</label>
+      <div id="rewardeditor" style="margin-top:8px"></div>
+      <button class="smallbtn" id="addreward" style="width:100%">＋ Add a reward</button>
+      <button class="bigbtn alt" id="savesettings">Save ✅</button>
+      <button class="bigbtn gray" id="resetall" style="margin-top:12px;font-size:15px;padding:11px 0">Reset everything…</button>
+    </div>
+  </div>
+
+  <!-- First run -->
+  <div class="overlay" id="firstrun">
+    <div class="modal" style="max-width:400px;text-align:center">
+      <div style="width:130px;height:118px;margin:0 auto" id="mascot2"></div>
+      <h2>Welcome to Paw Stamps!</h2>
+      <div class="m-sub">A stamp wallet for good deeds 🐾</div>
+      <label style="text-align:left">What's the kid's name?</label>
+      <input type="text" id="fr-name" maxlength="20" placeholder="e.g. Leo">
+      <label style="text-align:left">Parent secret code (4 digits)</label>
+      <input type="number" id="fr-pin" placeholder="1234" pattern="[0-9]*" inputmode="numeric">
+      <button class="bigbtn" id="fr-go">Let's go! 🚀</button>
+    </div>
+  </div>
+
+  <div id="slamlay"></div>
+</div>
+
+<script>
+/* ================= STATE ================= */
+var KEY='pawstamps.v1';
+var DEFAULT_REWARDS=[
+  {id:'r1',icon:'🍦',name:'Ice cream treat',cost:5},
+  {id:'r2',icon:'🧸',name:'Small toy',cost:10},
+  {id:'r3',icon:'🎬',name:'Movie night pick',cost:20},
+  {id:'r4',icon:'🎢',name:'Fun park trip',cost:50},
+  {id:'r5',icon:'🎁',name:'BIG surprise gift',cost:100}
+];
+var REASONS=['Helped out 🤝','Super kind 💖','Homework done 📚','Tidied up 🧹','Brave moment 💪','Great manners 🙏'];
+var state=null;
+
+function load(){
+  try{
+    var raw=localStorage.getItem(KEY);
+    if(raw){state=JSON.parse(raw);return true;}
+  }catch(e){}
+  state={v:1,name:'',pin:'1234',sound:true,balance:0,lifetime:0,history:[],rewards:JSON.parse(JSON.stringify(DEFAULT_REWARDS))};
+  return false;
+}
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
+}
+function uid(){return 'r'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36);}
+
+/* ================= SOUND ================= */
+var actx=null;
+function beep(kind){
+  if(!state.sound)return;
+  try{
+    if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended')actx.resume();
+    var t=actx.currentTime;
+    if(kind==='pop'){
+      tone(660,t,.09,'square',.25);tone(880,t+.07,.12,'square',.25);
+    }else if(kind==='tap'){
+      tone(520,t,.05,'sine',.15);
+    }else if(kind==='fanfare'){
+      tone(523,t,.14,'square',.22);tone(659,t+.12,.14,'square',.22);
+      tone(784,t+.24,.14,'square',.22);tone(1047,t+.36,.3,'square',.25);
+    }else if(kind==='no'){
+      tone(220,t,.15,'sawtooth',.18);tone(180,t+.13,.2,'sawtooth',.18);
+    }
+  }catch(e){}
+}
+function tone(f,t,d,w,g){
+  var o=actx.createOscillator(),v=actx.createGain();
+  o.type=w;o.frequency.value=f;
+  v.gain.setValueAtTime(g,t);v.gain.exponentialRampToValueAtTime(.001,t+d);
+  o.connect(v);v.connect(actx.destination);o.start(t);o.stop(t+d);
+}
+
+/* ================= SVG ART ================= */
+function catSVG(){
+  /* Battle Cats style: white blob, tiny pointy ears, dot eyes, huge open grin */
+  return '<svg viewBox="0 0 140 120">'+
+  '<g class="tail"><path d="M16 98 Q0 90 6 72 Q9 63 17 66" fill="none" stroke="#2B2117" stroke-width="6" stroke-linecap="round"/></g>'+
+  '<g class="cat-bod">'+
+  '<path d="M34 40 L42 8 L64 26 Z" fill="#fff" stroke="#2B2117" stroke-width="5" stroke-linejoin="round"/>'+
+  '<path d="M112 40 L104 8 L82 26 Z" fill="#fff" stroke="#2B2117" stroke-width="5" stroke-linejoin="round"/>'+
+  '<ellipse cx="72" cy="68" rx="52" ry="46" fill="#fff" stroke="#2B2117" stroke-width="5"/>'+
+  '<ellipse cx="52" cy="56" rx="4.2" ry="6" fill="#2B2117"/>'+
+  '<ellipse cx="92" cy="56" rx="4.2" ry="6" fill="#2B2117"/>'+
+  '<path d="M32 70 Q52 92 71 76 Q90 92 110 70" fill="none" stroke="#2B2117" stroke-width="4.5" stroke-linecap="round"/>'+
+  '<ellipse cx="54" cy="112" rx="12" ry="6.5" fill="#fff" stroke="#2B2117" stroke-width="4.5"/>'+
+  '<ellipse cx="90" cy="112" rx="12" ry="6.5" fill="#fff" stroke="#2B2117" stroke-width="4.5"/>'+
+  '</g></svg>';
+}
+function pawStampSVG(rot){
+  return '<svg viewBox="0 0 80 80"><g transform="rotate('+rot+' 40 40)" fill="#E8503A" opacity="0.92">'+
+  '<ellipse cx="40" cy="49" rx="17" ry="13.5"/>'+
+  '<ellipse cx="21" cy="31" rx="7" ry="8" transform="rotate(-18 21 31)"/>'+
+  '<ellipse cx="34" cy="23" rx="7" ry="8"/>'+
+  '<ellipse cx="47" cy="23" rx="7" ry="8"/>'+
+  '<ellipse cx="59" cy="31" rx="7" ry="8" transform="rotate(18 59 31)"/>'+
+  '</g></svg>';
+}
+function bigStampSVG(){
+  return '<svg viewBox="0 0 80 80" style="width:100%;height:100%"><g fill="#E8503A">'+
+  '<ellipse cx="40" cy="49" rx="17" ry="13.5"/>'+
+  '<ellipse cx="21" cy="31" rx="7" ry="8" transform="rotate(-18 21 31)"/>'+
+  '<ellipse cx="34" cy="23" rx="7" ry="8"/>'+
+  '<ellipse cx="47" cy="23" rx="7" ry="8"/>'+
+  '<ellipse cx="59" cy="31" rx="7" ry="8" transform="rotate(18 59 31)"/>'+
+  '<circle cx="40" cy="40" r="37" fill="none" stroke="#E8503A" stroke-width="4" stroke-dasharray="10 6"/>'+
+  '</g></svg>';
+}
+
+/* ================= HELPERS ================= */
+function $(id){return document.getElementById(id);}
+function show(id){$(id).classList.add('on');}
+function hide(id){$(id).classList.remove('on');}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ================= RENDER ================= */
+function renderAll(){
+  $('bal').textContent=state.balance;
+  $('greet').textContent=state.name?('Hi, '+state.name+'! 👋'):'Paw Stamps';
+  renderWallet();renderRewards();renderBook();
+}
+var freshIndex=-1;
+function renderWallet(){
+  var full=Math.floor(state.balance/10);
+  var cur=state.balance%10;
+  var h='';
+  if(full>0){
+    h+='<div class="section-title">🏆 Saved full cards: '+full+' ('+(full*10)+' stamps banked!)</div><div class="fullcards">';
+    var shown=Math.min(full,12);
+    for(var i=0;i<shown;i++)h+='<div class="minicard">🐾 ×10</div>';
+    if(full>shown)h+='<div class="minicard">＋'+(full-shown)+' more!</div>';
+    h+='</div>';
+  }
+  h+='<div class="stampcard"><div class="ribbon">'+(full>0?'Card #'+(full+1):'My stamp card')+'</div><div class="slots">';
+  for(var s=0;s<10;s++){
+    if(s<cur){
+      var rot=((s*47)%15)-7;
+      var fresh=(s===cur-1&&freshIndex===s)?' fresh':'';
+      h+='<div class="slot'+fresh+'"><div class="ring"></div><div class="stampink">'+pawStampSVG(rot)+'</div></div>';
+    }else{
+      h+='<div class="slot"><div class="ring">'+(s+1)+'</div></div>';
+    }
+  }
+  h+='</div><div class="card-progress">'+(cur===0&&state.balance>0?'New card — go go go! 🚀':(10-cur)+' more to finish this card!')+'</div></div>';
+
+  var next=nextReward();
+  if(next){
+    var need=next.cost-state.balance;
+    h+='<div class="section-title">🎯 Next goal: '+next.icon+' '+esc(next.name)+' — '+(need>0?need+' stamps to go!':'READY! Go redeem it! 🎉')+'</div>';
+  }
+  $('page-wallet').innerHTML=h;
+  freshIndex=-1;
+}
+function nextReward(){
+  var best=null;
+  for(var i=0;i<state.rewards.length;i++){
+    var r=state.rewards[i];
+    if(!best||r.cost<best.cost){
+      if(r.cost>state.balance&&(!best||r.cost<best.cost))best=r;
+    }
+  }
+  if(best)return best;
+  var cheapest=null;
+  for(var j=0;j<state.rewards.length;j++){
+    if(!cheapest||state.rewards[j].cost<cheapest.cost)cheapest=state.rewards[j];
+  }
+  return cheapest;
+}
+function renderRewards(){
+  var rs=state.rewards.slice().sort(function(a,b){return a.cost-b.cost;});
+  var h='<div class="section-title">🎁 Trade your stamps for…</div>';
+  if(rs.length===0)h+='<div class="empty">No rewards yet — parents can add some in ⚙️ Settings!</div>';
+  for(var i=0;i<rs.length;i++){
+    var r=rs[i];
+    var pct=Math.min(100,Math.round(state.balance/r.cost*100));
+    var ok=state.balance>=r.cost;
+    h+='<div class="reward'+(ok?' ok':'')+'">'+
+      '<div class="r-ico">'+esc(r.icon)+'</div>'+
+      '<div class="r-mid"><div class="r-name">'+esc(r.name)+'</div>'+
+      '<div class="r-cost">'+r.cost+' stamps · you have '+Math.min(state.balance,r.cost)+'/'+r.cost+'</div>'+
+      '<div class="pbar"><i style="width:'+pct+'%"></i></div></div>'+
+      '<button class="btn-redeem" data-rid="'+r.id+'">'+(ok?'GET IT!':'Not yet')+'</button>'+
+      '</div>';
+  }
+  h+='<button class="bigbtn gray" id="editrewards" style="font-size:15px;padding:11px 0">✏️ Parents: edit rewards</button>';
+  $('page-rewards').innerHTML=h;
+  $('editrewards').addEventListener('click',function(){
+    beep('tap');
+    gateThen(openSettings);
+  });
+  var btns=$('page-rewards').querySelectorAll('.btn-redeem');
+  for(var b=0;b<btns.length;b++){
+    btns[b].addEventListener('click',function(){
+      var r=findReward(this.getAttribute('data-rid'));
+      if(!r)return;
+      if(state.balance<r.cost){beep('no');return;}
+      gateThen(function(){openRedeem(r);});
+    });
+  }
+}
+function findReward(id){
+  for(var i=0;i<state.rewards.length;i++)if(state.rewards[i].id===id)return state.rewards[i];
+  return null;
+}
+function renderBook(){
+  var h='<div class="lifetime">⭐ All-time stamps earned: '+state.lifetime+'</div>';
+  if(state.history.length===0){
+    h+='<div class="empty">Nothing here yet…<br>Do something great to earn your first stamp! 🐾</div>';
+  }
+  var lastday='';
+  for(var i=state.history.length-1;i>=0;i--){
+    var e=state.history[i];
+    var d=new Date(e.t);
+    var day=d.toDateString();
+    if(day!==lastday){
+      lastday=day;
+      var today=new Date().toDateString();
+      var yest=new Date(Date.now()-864e5).toDateString();
+      var label=day===today?'Today':(day===yest?'Yesterday':(d.getMonth()+1)+'/'+d.getDate()+' '+['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]);
+      h+='<div class="day-h">'+label+'</div>';
+    }
+    var hh=d.getHours(),mm=d.getMinutes();
+    var tm=(hh%12||12)+':'+(mm<10?'0':'')+mm+(hh<12?' am':' pm');
+    if(e.kind==='stamp'){
+      h+='<div class="hitem plus"><div class="h-amt">+'+e.n+'</div><div class="h-note">'+esc(e.note)+'</div><div class="h-time">'+tm+'</div></div>';
+    }else{
+      h+='<div class="hitem minus"><div class="h-amt">−'+e.n+'</div><div class="h-note">'+esc(e.note)+'</div><div class="h-time">'+tm+'</div></div>';
+    }
+  }
+  $('page-book').innerHTML=h;
+}
+
+/* ================= TABS ================= */
+var navbtns=document.querySelectorAll('nav button');
+for(var nb=0;nb<navbtns.length;nb++){
+  navbtns[nb].addEventListener('click',function(){
+    beep('tap');
+    for(var i=0;i<navbtns.length;i++)navbtns[i].classList.remove('on');
+    this.classList.add('on');
+    var tab=this.getAttribute('data-tab');
+    var pages=document.querySelectorAll('.tabpage');
+    for(var p=0;p<pages.length;p++)pages[p].classList.remove('on');
+    show('page-'+tab);
+    $('main').scrollTop=0;
+  });
+}
+
+/* ================= PIN GATE ================= */
+var pinBuf='',gateCb=null;
+function buildPinpad(){
+  var keys=['1','2','3','4','5','6','7','8','9','','0','⌫'];
+  var h='';
+  for(var i=0;i<keys.length;i++){
+    if(keys[i]==='')h+='<span></span>';
+    else h+='<button data-k="'+keys[i]+'">'+keys[i]+'</button>';
+  }
+  $('pinpad').innerHTML=h;
+  var btns=$('pinpad').querySelectorAll('button');
+  for(var b=0;b<btns.length;b++){
+    btns[b].addEventListener('click',function(){
+      beep('tap');
+      var k=this.getAttribute('data-k');
+      if(k==='⌫')pinBuf=pinBuf.slice(0,-1);
+      else if(pinBuf.length<4)pinBuf+=k;
+      paintDots();
+      if(pinBuf.length===4)checkPin();
+    });
+  }
+}
+function paintDots(){
+  var dots=$('pindots').children;
+  for(var i=0;i<4;i++)dots[i].className=i<pinBuf.length?'f':'';
+}
+function checkPin(){
+  if(pinBuf===state.pin){
+    hide('gate');
+    var cb=gateCb;gateCb=null;pinBuf='';
+    if(cb)setTimeout(cb,120);
+  }else{
+    beep('no');
+    $('pindots').classList.add('shake');
+    setTimeout(function(){$('pindots').classList.remove('shake');pinBuf='';paintDots();},420);
+  }
+}
+function gateThen(cb){
+  pinBuf='';paintDots();gateCb=cb;
+  $('pinhint').textContent=(state.pin==='1234')?'(Default code is 1234 — change it in Settings)':'';
+  show('gate');
+}
+
+/* ================= GIVE STAMP ================= */
+var chosenReason=REASONS[0],chosenCount=1;
+function buildReasons(){
+  var h='';
+  for(var i=0;i<REASONS.length;i++){
+    h+='<button class="chip'+(i===0?' on':'')+'" data-r="'+REASONS[i]+'">'+REASONS[i]+'</button>';
+  }
+  h+='<button class="chip" data-r="__custom">✏️ My own…</button>';
+  $('reasonchips').innerHTML=h;
+  var chips=$('reasonchips').querySelectorAll('.chip');
+  for(var c=0;c<chips.length;c++){
+    chips[c].addEventListener('click',function(){
+      beep('tap');
+      for(var i=0;i<chips.length;i++)chips[i].classList.remove('on');
+      this.classList.add('on');
+      var r=this.getAttribute('data-r');
+      if(r==='__custom'){
+        chosenReason='__custom';
+        $('customreason').style.display='block';
+        $('customreason').focus();
+      }else{
+        chosenReason=r;
+        $('customreason').style.display='none';
+      }
+    });
+  }
+  var cnts=$('countrow').querySelectorAll('.cnt');
+  for(var n=0;n<cnts.length;n++){
+    cnts[n].addEventListener('click',function(){
+      beep('tap');
+      for(var i=0;i<cnts.length;i++)cnts[i].classList.remove('on');
+      this.classList.add('on');
+      chosenCount=parseInt(this.getAttribute('data-n'),10);
+    });
+  }
+}
+$('fabbtn').addEventListener('click',function(){
+  beep('tap');
+  gateThen(function(){show('give');});
+});
+$('stampit').addEventListener('click',function(){
+  var reason=chosenReason==='__custom'?($('customreason').value.trim()||'Being awesome!'):chosenReason;
+  hide('give');
+  giveStamps(chosenCount,reason);
+});
+function giveStamps(n,reason){
+  var before=state.balance;
+  state.balance+=n;
+  state.lifetime+=n;
+  state.history.push({t:Date.now(),kind:'stamp',n:n,note:reason});
+  if(state.history.length>500)state.history=state.history.slice(-500);
+  save();
+  /* slam animation */
+  var lay=$('slamlay');
+  lay.innerHTML='<div class="bigstamp">'+bigStampSVG()+'</div>';
+  lay.classList.add('on');
+  document.getElementById('app').classList.add('shakeit');
+  beep('pop');
+  confetti(26);
+  setTimeout(function(){
+    lay.classList.remove('on');lay.innerHTML='';
+    document.getElementById('app').classList.remove('shakeit');
+    freshIndex=(state.balance%10)-1;
+    if(freshIndex<0)freshIndex=9;
+    renderAll();
+    var crossed=Math.floor(state.balance/10)>Math.floor(before/10);
+    if(crossed){
+      beep('fanfare');
+      celebrate('🏆','CARD COMPLETE!','You filled a whole card — amazing!');
+    }
+  },900);
+}
+
+/* ================= REDEEM ================= */
+var redeemTarget=null;
+function openRedeem(r){
+  redeemTarget=r;
+  $('rd-title').textContent='Trade '+r.cost+' stamps?';
+  $('rd-ico').textContent=r.icon;
+  $('rd-sub').textContent=r.name+' — you have '+state.balance+' stamps';
+  show('redeem');
+}
+$('rd-yes').addEventListener('click',function(){
+  var r=redeemTarget;
+  if(!r||state.balance<r.cost)return;
+  state.balance-=r.cost;
+  state.history.push({t:Date.now(),kind:'redeem',n:r.cost,note:r.icon+' '+r.name});
+  save();
+  hide('redeem');
+  beep('fanfare');
+  confetti(40);
+  celebrate(r.icon,'ENJOY YOUR PRIZE!',r.name+' — you earned it! 🐾');
+  renderAll();
+});
+
+/* ================= CELEBRATE + CONFETTI ================= */
+function celebrate(emoji,line,line2){
+  $('c-emoji').textContent=emoji;
+  $('c-line').textContent=line;
+  $('c-line2').textContent=line2;
+  show('celebrate');
+}
+$('c-ok').addEventListener('click',function(){beep('tap');hide('celebrate');});
+function confetti(n){
+  var colors=['#E8503A','#FFC531','#5AB1E8','#FF8FA3','#7BC96F'];
+  var app=document.getElementById('app');
+  for(var i=0;i<n;i++){
+    var d=document.createElement('div');
+    d.className='cf';
+    d.style.left=(5+Math.random()*90)+'%';
+    d.style.top=(-5-Math.random()*10)+'%';
+    d.style.background=colors[i%colors.length];
+    d.style.borderRadius=Math.random()>.5?'50%':'2px';
+    d.style.animationDelay=(Math.random()*.4)+'s';
+    d.style.animationDuration=(1.2+Math.random()*.9)+'s';
+    app.appendChild(d);
+    (function(el){setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},2600);})(d);
+  }
+}
+
+/* ================= SETTINGS ================= */
+$('gearbtn').addEventListener('click',function(){
+  beep('tap');
+  gateThen(openSettings);
+});
+function openSettings(){
+  $('set-name').value=state.name;
+  $('set-sound').textContent=state.sound?'On 🔊':'Off 🔇';
+  buildRewardEditor();
+  show('settings');
+}
+$('set-sound').addEventListener('click',function(){
+  state.sound=!state.sound;
+  this.textContent=state.sound?'On 🔊':'Off 🔇';
+  beep('tap');
+});
+$('set-pin').addEventListener('click',function(){
+  var p=prompt('New 4-digit secret code:');
+  if(p&&/^\d{4}$/.test(p)){state.pin=p;save();alert('Code changed! 🔒');}
+  else if(p!==null)alert('Please enter exactly 4 digits.');
+});
+function buildRewardEditor(){
+  var h='';
+  for(var i=0;i<state.rewards.length;i++){
+    var r=state.rewards[i];
+    h+='<div class="r-editrow" data-id="'+r.id+'">'+
+      '<input class="ico" type="text" maxlength="4" value="'+esc(r.icon)+'">'+
+      '<input class="nm" type="text" maxlength="30" value="'+esc(r.name)+'">'+
+      '<input class="ct" type="number" min="1" max="9999" value="'+r.cost+'" pattern="[0-9]*">'+
+      '<button class="del">🗑</button></div>';
+  }
+  $('rewardeditor').innerHTML=h;
+  var dels=$('rewardeditor').querySelectorAll('.del');
+  for(var d=0;d<dels.length;d++){
+    dels[d].addEventListener('click',function(){
+      var row=this.parentNode;
+      row.parentNode.removeChild(row);
+    });
+  }
+}
+$('addreward').addEventListener('click',function(){
+  var div=document.createElement('div');
+  div.className='r-editrow';
+  div.setAttribute('data-id',uid());
+  div.innerHTML='<input class="ico" type="text" maxlength="4" value="⭐">'+
+    '<input class="nm" type="text" maxlength="30" value="New reward">'+
+    '<input class="ct" type="number" min="1" max="9999" value="15" pattern="[0-9]*">'+
+    '<button class="del">🗑</button>';
+  div.querySelector('.del').addEventListener('click',function(){
+    div.parentNode.removeChild(div);
+  });
+  $('rewardeditor').appendChild(div);
+});
+$('savesettings').addEventListener('click',function(){
+  state.name=$('set-name').value.trim();
+  var rows=$('rewardeditor').querySelectorAll('.r-editrow');
+  var rs=[];
+  for(var i=0;i<rows.length;i++){
+    var icon=rows[i].querySelector('.ico').value.trim()||'⭐';
+    var name=rows[i].querySelector('.nm').value.trim()||'Reward';
+    var cost=parseInt(rows[i].querySelector('.ct').value,10);
+    if(!(cost>0))cost=5;
+    rs.push({id:rows[i].getAttribute('data-id'),icon:icon,name:name,cost:cost});
+  }
+  state.rewards=rs;
+  save();
+  hide('settings');
+  beep('pop');
+  renderAll();
+});
+$('resetall').addEventListener('click',function(){
+  if(confirm('Reset EVERYTHING? All stamps and history will be gone!')){
+    if(confirm('Really sure? This cannot be undone.')){
+      localStorage.removeItem(KEY);
+      location.reload();
+    }
+  }
+});
+
+/* ================= CLOSE BUTTONS ================= */
+var closers=document.querySelectorAll('.m-close');
+for(var cl=0;cl<closers.length;cl++){
+  closers[cl].addEventListener('click',function(){
+    beep('tap');
+    hide(this.getAttribute('data-close'));
+    gateCb=null;
+  });
+}
+
+/* ================= FIRST RUN ================= */
+$('fr-go').addEventListener('click',function(){
+  var nm=$('fr-name').value.trim();
+  var pn=$('fr-pin').value.trim();
+  if(nm)state.name=nm;
+  if(/^\d{4}$/.test(pn))state.pin=pn;
+  save();
+  hide('firstrun');
+  beep('fanfare');
+  confetti(30);
+  renderAll();
+});
+
+/* ================= INIT ================= */
+var existed=load();
+$('mascot').innerHTML=catSVG();
+$('mascot2').innerHTML=catSVG();
+buildPinpad();
+buildReasons();
+renderAll();
+if(!existed)show('firstrun');
+
+/* keep screen from double-tap zooming */
+var lastTouch=0;
+document.addEventListener('touchend',function(e){
+  var now=Date.now();
+  if(now-lastTouch<350)e.preventDefault();
+  lastTouch=now;
+},{passive:false});
+
+/* service worker (works when served over https or localhost) */
+if('serviceWorker' in navigator){
+  try{navigator.serviceWorker.register('sw.js');}catch(e){}
+}
+</script>
+</body>
+</html>

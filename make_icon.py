@@ -53,8 +53,8 @@ def stroke_quad(p0, p1, p2, r, color):
         x = (1-t)**2*p0[0] + 2*(1-t)*t*p1[0] + t**2*p2[0]
         y = (1-t)**2*p0[1] + 2*(1-t)*t*p1[1] + t**2*p2[1]
         ellipse(x, y, r, r, color)
-stroke_quad((44, 114), (66, 144), (90, 122), 4.5, INK)
-stroke_quad((90, 122), (114, 144), (136, 114), 4.5, INK)
+stroke_quad((64, 114), (77, 130), (90, 120), 4, INK)
+stroke_quad((90, 120), (103, 130), (116, 114), 4, INK)
 # red paw stamp, bottom-right corner
 ellipse(150, 156, 13, 10, RED)
 ellipse(135, 141, 5.5, 6.5, RED)

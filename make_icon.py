@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate apple-touch-icon.png (180x180) — Battle Cats style blob cat, no deps."""
+"""Generate apple-touch-icon.png (180x180) — cute blob cat, no deps."""
 import struct, zlib
 
 W = H = 180
@@ -33,7 +33,7 @@ def tri(p1, p2, p3, color):
             if not (neg and pos):
                 px[y][x] = color
 
-# --- Battle Cats blob cat ---
+# --- blob cat ---
 # tiny pointy ears (ink triangle, white inner)
 tri((38, 78), (50, 30), (80, 58), INK)
 tri((142, 78), (130, 30), (100, 58), INK)
@@ -45,7 +45,7 @@ ellipse(90, 110, 61, 53, WHITE)
 # small dot eyes, wide apart
 ellipse(60, 90, 7, 9, INK)
 ellipse(120, 90, 7, 9, INK)
-# signature Battle Cat wavy mouth: two rounded bumps across the face
+# wavy mouth: two rounded bumps across the face
 def stroke_quad(p0, p1, p2, r, color):
     steps = 60
     for i in range(steps + 1):

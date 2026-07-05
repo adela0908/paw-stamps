@@ -1,0 +1,23 @@
+name: PawStamps
+options:
+  createIntermediateGroups: true
+  deploymentTarget:
+    iOS: "15.0"
+targets:
+  PawStamps:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - PawStamps
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.pawstamps.app
+        INFOPLIST_FILE: PawStamps/Info.plist
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MACCATALYST: NO
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 1.0.0
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        DEVELOPMENT_TEAM: ""
+        CODE_SIGN_STYLE: Automatic

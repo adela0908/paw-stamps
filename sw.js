@@ -1,6 +1,7 @@
-/* Paw Stamps service worker — cache-first so the app works offline
-   (only registers on https or localhost; harmless elsewhere) */
-var CACHE = 'pawstamps-v1';
+/* Paw Stamps service worker
+   - network-first for pages: always get updates when online
+   - cache fallback: still works fully offline */
+var CACHE = 'pawstamps-v2';
 var ASSETS = ['./', './index.html', './manifest.json', './apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {
@@ -22,15 +23,17 @@ self.addEventListener('activate', function (e) {
 });
 
 self.addEventListener('fetch', function (e) {
+  if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(function (hit) {
-      if (hit) return hit;
-      return fetch(e.request).then(function (res) {
-        if (res && res.ok && e.request.method === 'GET') {
-          var copy = res.clone();
-          caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
-        }
-        return res;
+    fetch(e.request).then(function (res) {
+      if (res && res.ok) {
+        var copy = res.clone();
+        caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
+      }
+      return res;
+    }).catch(function () {
+      return caches.match(e.request).then(function (hit) {
+        return hit || caches.match('./index.html');
       });
     })
   );
